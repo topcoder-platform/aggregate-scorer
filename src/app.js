@@ -12,17 +12,24 @@ const healthcheck = require('topcoder-healthcheck-dropin')
 // start Kafka consumer
 logger.info('Start Kafka consumer.')
 // create consumer
-const options = { connectionString: config.KAFKA_URL }
+const options = {
+  connectionString: config.KAFKA_URL
+}
 if (config.KAFKA_CLIENT_CERT && config.KAFKA_CLIENT_CERT_KEY) {
-  options.ssl = { cert: config.KAFKA_CLIENT_CERT, key: config.KAFKA_CLIENT_CERT_KEY }
+  options.ssl = {
+    cert: config.KAFKA_CLIENT_CERT,
+    key: config.KAFKA_CLIENT_CERT_KEY
+  }
 }
 const consumer = new Kafka.SimpleConsumer(options)
 
 // data handler
 const dataHandler = (messageSet, topic, partition) => Promise.each(messageSet, (m) => {
   const message = m.message.value.toString('utf8')
-  logger.info(`Handle Kafka event message; Topic: ${topic}; Partition: ${partition}; Offset: ${
-    m.offset}; Message: ${message}.`)
+  logger.info(
+    `Handle Kafka event message; Topic: ${topic}; Partition: ${partition}; Offset: ${
+      m.offset}; Message: ${message}.`
+  )
   let messageJSON
   try {
     messageJSON = JSON.parse(message)
@@ -41,15 +48,19 @@ const dataHandler = (messageSet, topic, partition) => Promise.each(messageSet, (
   // note that when resource and typeId do not match, this is not error, this just indicates
   // the message is not of our interest, the message may be valid for other processors,
   // so it doesn't throw error, but simply returns false to ignore this message
-  if (message.payload.resource !== config.PAYLOAD_RESOURCE ||
+  if (_.get(message, 'payload.resource', '') !== config.PAYLOAD_RESOURCE ||
     message.payload.typeId !== config.PAYLOAD_TYPE_ID) {
-    logger.info('Message payload resource or typeId is not matched, the message is ignored.')
+    logger.info(
+      `Message payload resource or typeId is not matched, the message is ignored: ${_.get(message, 'payload.resource', '')} / ${_.get(message, 'payload.typeId', '')}`
+    )
     return
   }
 
   return KafkaProcessorService.handle(messageJSON)
     // commit offset if the message is successfully handled
-    .then((handled) => handled && consumer.commitOffset({ topic, partition, offset: m.offset }))
+    .then((handled) => handled && consumer.commitOffset({
+      topic, partition, offset: m.offset
+    }))
     .catch((err) => logger.logFullError(err))
 })
 
@@ -73,7 +84,9 @@ consumer
     healthcheck.init([check])
 
     _.each(config.TOPICS, (tp) => {
-      consumer.subscribe(tp, { time: Kafka.LATEST_OFFSET }, dataHandler)
+      consumer.subscribe(tp, {
+        time: Kafka.LATEST_OFFSET
+      }, dataHandler)
     })
   })
   .catch((err) => logger.logFullError(err))

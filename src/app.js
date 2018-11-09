@@ -7,6 +7,7 @@ const _ = require('lodash')
 const logger = require('./common/logger')
 const Kafka = require('no-kafka')
 const KafkaProcessorService = require('./services/KafkaProcessorService')
+const healthcheck = require('topcoder-healthcheck-dropin')
 
 // start Kafka consumer
 logger.info('Start Kafka consumer.')
@@ -36,18 +37,45 @@ const dataHandler = (messageSet, topic, partition) => Promise.each(messageSet, (
     // ignore the message
     return
   }
+  // check if the message is of our interest
+  // note that when resource and typeId do not match, this is not error, this just indicates
+  // the message is not of our interest, the message may be valid for other processors,
+  // so it doesn't throw error, but simply returns false to ignore this message
+  if (message.payload.resource !== config.PAYLOAD_RESOURCE ||
+    message.payload.typeId !== config.PAYLOAD_TYPE_ID) {
+    logger.info('Message payload resource or typeId is not matched, the message is ignored.')
+    return
+  }
+
   return KafkaProcessorService.handle(messageJSON)
     // commit offset if the message is successfully handled
     .then((handled) => handled && consumer.commitOffset({ topic, partition, offset: m.offset }))
     .catch((err) => logger.logFullError(err))
 })
 
+// check if there is kafka connection alive
+function check () {
+  if (!consumer.client.initialBrokers && !consumer.client.initialBrokers.length) {
+    return false
+  }
+  let connected = true
+  consumer.client.initialBrokers.forEach(conn => {
+    logger.debug(`url ${conn.server()} - connected=${conn.connected}`)
+    connected = conn.connected & connected
+  })
+  return connected
+}
+
 consumer
   .init()
   // consume configured topics
-  .then(() => _.each(config.TOPICS, (tp) => {
-    consumer.subscribe(tp, { time: Kafka.LATEST_OFFSET }, dataHandler)
-  }))
+  .then(() => {
+    healthcheck.init([check])
+
+    _.each(config.TOPICS, (tp) => {
+      consumer.subscribe(tp, { time: Kafka.LATEST_OFFSET }, dataHandler)
+    })
+  })
   .catch((err) => logger.logFullError(err))
 
 module.exports = {

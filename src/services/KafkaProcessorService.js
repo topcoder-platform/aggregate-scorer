@@ -16,16 +16,6 @@ const helper = require('../common/helper')
 async function handle (message) {
   // log message
   logger.info(`Kafka message: ${JSON.stringify(message, null, 4)}`)
-  // check if the message is of our interest
-  // note that when resource and typeId do not match, this is not error, this just indicates
-  // the message is not of our interest, the message may be valid for other processors,
-  // so it doesn't throw error, but simply returns false to ignore this message
-  if (message.payload.resource !== config.PAYLOAD_RESOURCE ||
-    message.payload.typeId !== config.PAYLOAD_TYPE_ID) {
-    logger.info('Message payload resource or typeId is not matched, the message is ignored.')
-    return false
-  }
-
   // get m2m token
   const token = await helper.getM2Mtoken()
   // get submission

@@ -1,0 +1,8 @@
+version: '3'
+services:
+  aggregate-scorer:
+    image: aggregate-scorer:latest
+    build:
+      context: ../
+      dockerfile: docker/Dockerfile
+    network_mode: "host"

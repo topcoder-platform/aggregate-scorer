@@ -21,7 +21,7 @@ module.exports = {
   AUTH0_CLIENT_SECRET: process.env.AUTH0_CLIENT_SECRET,
 
   PAYLOAD_RESOURCE: process.env.PAYLOAD_RESOURCE || 'review',
-  PAYLOAD_TYPE_ID: process.env.PAYLOAD_TYPE_ID || 'c56a4180-65aa-42ec-a945-5fd21dec0501',
+  PAYLOAD_TYPE_ID: process.env.PAYLOAD_TYPE_ID || 'e6ca06fe-bec5-41bb-afac-636860fb39a7',
   SUBMISSION_PHASE_TYPE: process.env.SUBMISSION_PHASE_TYPE || 'Submission',
   
   GET_SUBMISSION_DETAILS_URL: process.env.GET_SUBMISSION_DETAILS_URL ||
@@ -29,7 +29,7 @@ module.exports = {
   GET_CHALLENGE_DETAILS_URL: process.env.GET_CHALLENGE_DETAILS_URL ||
     'https://api.topcoder-dev.com/v3/challenges/{challengeId}',
   GET_SUBMISSION_REVIEW_DETAILS_URL: process.env.GET_SUBMISSION_REVIEW_DETAILS_URL ||
-    'http://localhost:4000/submission-review-details/{submissionId}', // mock API
+    'https://api.topcoder-dev.com/v5/submissions/{submissionId}',
   GET_REVIEW_SUMMATION_URL: process.env.GET_REVIEW_SUMMATION_URL ||
     'https://api.topcoder-dev.com/v5/reviewSummations?submissionId={submissionId}',
   CREATE_REVIEW_SUMMATION_URL: process.env.CREATE_REVIEW_SUMMATION_URL ||

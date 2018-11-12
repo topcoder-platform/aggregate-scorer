@@ -29,7 +29,7 @@ module.exports = {
   GET_CHALLENGE_DETAILS_URL: process.env.GET_CHALLENGE_DETAILS_URL ||
     'https://api.topcoder-dev.com/v3/challenges/{challengeId}',
   GET_SUBMISSION_REVIEW_DETAILS_URL: process.env.GET_SUBMISSION_REVIEW_DETAILS_URL ||
-    'https://api.topcoder-dev.com/v5/submissions/{submissionId}',
+    'https://api.topcoder-dev.com/v5/reviews?submissionId={submissionId}',
   GET_REVIEW_SUMMATION_URL: process.env.GET_REVIEW_SUMMATION_URL ||
     'https://api.topcoder-dev.com/v5/reviewSummations?submissionId={submissionId}',
   CREATE_REVIEW_SUMMATION_URL: process.env.CREATE_REVIEW_SUMMATION_URL ||

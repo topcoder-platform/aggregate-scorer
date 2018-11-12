@@ -1,6 +1,12 @@
 /**
  * The configuration file.
  */
+const fs = require('fs')
+
+function fileIfExists (path) {
+  return fs.existsSync(path) ? path : null
+}
+
 module.exports = {
   DISABLE_LOGGING: process.env.DISABLE_LOGGING ? Boolean(process.env.DISABLE_LOGGING) : false,
   LOG_LEVEL: process.env.LOG_LEVEL || 'debug',
@@ -8,11 +14,12 @@ module.exports = {
   KAFKA_URL: process.env.KAFKA_URL || 'localhost:9092',
   // below two params are used for secure Kafka connection, they are optional
   // for the local Kafka, they are not needed
-  KAFKA_CLIENT_CERT: process.env.KAFKA_CLIENT_CERT,
-  KAFKA_CLIENT_CERT_KEY: process.env.KAFKA_CLIENT_CERT_KEY,
+  KAFKA_CLIENT_CERT: process.env.KAFKA_CLIENT_CERT || fileIfExists('./kafkadev.cert'),
+  KAFKA_CLIENT_CERT_KEY: process.env.KAFKA_CLIENT_CERT_KEY || fileIfExists('./kafkadev.key'),
   // Kafka topics to listen to
-  TOPICS: (process.env.TOPICS && process.env.TOPICS.split(',')) ||
-    ['submission.notification.create', 'submission.notification.update'],
+  TOPICS: (process.env.TOPICS && process.env.TOPICS.split(',')) || ['submission.notification.create',
+    'submission.notification.update'
+  ],
 
   AUTH0_URL: process.env.AUTH0_URL,
   AUTH0_AUDIENCE: process.env.AUTH0_AUDIENCE || 'https://m2m.topcoder-dev.com/',

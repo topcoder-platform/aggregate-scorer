@@ -23,13 +23,13 @@ module.exports = {
   PAYLOAD_RESOURCE: process.env.PAYLOAD_RESOURCE || 'review',
   PAYLOAD_TYPE_ID: process.env.PAYLOAD_TYPE_ID || 'e6ca06fe-bec5-41bb-afac-636860fb39a7',
   SUBMISSION_PHASE_TYPE: process.env.SUBMISSION_PHASE_TYPE || 'Submission',
-  
+
   GET_SUBMISSION_DETAILS_URL: process.env.GET_SUBMISSION_DETAILS_URL ||
     'https://api.topcoder-dev.com/v5/submissions/{submissionId}',
   GET_CHALLENGE_DETAILS_URL: process.env.GET_CHALLENGE_DETAILS_URL ||
     'https://api.topcoder-dev.com/v3/challenges/{challengeId}',
   GET_SUBMISSION_REVIEW_DETAILS_URL: process.env.GET_SUBMISSION_REVIEW_DETAILS_URL ||
-    'https://api.topcoder-dev.com/v5/submissions/{submissionId}',
+    'https://api.topcoder-dev.com/v5/reviews/{reviewId}',
   GET_REVIEW_SUMMATION_URL: process.env.GET_REVIEW_SUMMATION_URL ||
     'https://api.topcoder-dev.com/v5/reviewSummations?submissionId={submissionId}',
   CREATE_REVIEW_SUMMATION_URL: process.env.CREATE_REVIEW_SUMMATION_URL ||

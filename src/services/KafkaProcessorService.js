@@ -40,9 +40,17 @@ async function handle (message) {
   }
   const timeSince = submissionCreatedDate.getTime() - submissionPhaseStartedDate.getTime()
   // get submission review details
-  const reviewDetails = await helper.getSubmissionReviewDetails(submissionId, token)
+  const reviewDetails = await helper.getSubmissionReviewDetails(message.payload.id, token)
+
+  if (!reviewDetails.metadata || !reviewDetails.metadata.tests) {
+    throw new Error(`Review for submission with id ${submissionId} does not have metadata. Cannot calculate score without it.`)
+  }
+
+  let tests = reviewDetails.metadata.tests
+
+  let testsPassed = tests.total - tests.pending - tests.failed
   // calculate aggregate score
-  const ratio = reviewDetails.testsPassed / reviewDetails.totalTests
+  const ratio = testsPassed / tests.total
   let aggregateScore = (ratio * 100) + (timeSince * ratio / 100)
   // aggregateScore won't be negative
   if (aggregateScore > 100) {
@@ -53,7 +61,8 @@ async function handle (message) {
     aggregateScore,
     isPassing: true,
     scoreCardId: uuid(),
-    submissionId
+    submissionId,
+    metadata: reviewDetails.metadata
   }
   logger.info(`Save review summation: ${JSON.stringify(reviewSummation, null, 4)}`)
   await helper.saveSubmissionReviewSummation(submissionId, reviewSummation, token)

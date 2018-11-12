@@ -62,12 +62,12 @@ async function getChallengeDetails (challengeId, m2mToken) {
 
 /**
  * Function to get submission review details
- * @param {String} submissionId the submission id
+ * @param {String} reviewId the review id
  * @param {String} m2mToken the m2m token to call TC API
  * @returns {Object} the submission review details
  */
-async function getSubmissionReviewDetails (submissionId, m2mToken) {
-  const url = config.GET_SUBMISSION_REVIEW_DETAILS_URL.replace('{submissionId}', submissionId)
+async function getSubmissionReviewDetails (reviewId, m2mToken) {
+  const url = config.GET_SUBMISSION_REVIEW_DETAILS_URL.replace('{reviewId}', reviewId)
   const result = await getTCAPIClient(m2mToken).get(url)
   return result.data
 }
@@ -83,6 +83,7 @@ async function saveSubmissionReviewSummation (submissionId, reviewSummation, m2m
   const client = getTCAPIClient(m2mToken)
   const getUrl = config.GET_REVIEW_SUMMATION_URL.replace('{submissionId}', submissionId)
   const result = await client.get(getUrl)
+
   if (result.data.length === 0) {
     // create review summation
     await client.post(config.CREATE_REVIEW_SUMMATION_URL, reviewSummation)

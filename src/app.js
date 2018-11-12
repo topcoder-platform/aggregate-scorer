@@ -48,10 +48,10 @@ const dataHandler = (messageSet, topic, partition) => Promise.each(messageSet, (
   // note that when resource and typeId do not match, this is not error, this just indicates
   // the message is not of our interest, the message may be valid for other processors,
   // so it doesn't throw error, but simply returns false to ignore this message
-  if (_.get(message, 'payload.resource', '') !== config.PAYLOAD_RESOURCE ||
-    message.payload.typeId !== config.PAYLOAD_TYPE_ID) {
+  if (_.get(messageJSON, 'payload.resource', '') !== config.PAYLOAD_RESOURCE ||
+    _.get(messageJSON, 'payload.typeId', '') !== config.PAYLOAD_TYPE_ID) {
     logger.info(
-      `Message payload resource or typeId is not matched, the message is ignored: ${_.get(message, 'payload.resource', '')} / ${_.get(message, 'payload.typeId', '')}`
+      `Message payload resource or typeId is not matched, the message is ignored: ${_.get(messageJSON, 'payload.resource', '')} / ${_.get(messageJSON, 'payload.typeId', '')}`
     )
     return
   }

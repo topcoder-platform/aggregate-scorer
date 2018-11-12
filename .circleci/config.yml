@@ -50,7 +50,7 @@ jobs:
           command: |
             git clone --branch master https://github.com/topcoder-platform/tc-deploy-scripts ../buildscript
             cp ./../buildscript/master_deply_v4.2.sh .
-            #./master_deply_v4.2.sh -d ECS -e PROD  -t latest -s aggregate-scorer -i aggregate-scorer
+            ./master_deply_v4.2.sh -d ECS -e PROD  -t latest -s aggregate-scorer -i aggregate-scorer
 
 workflows:
   version: 2

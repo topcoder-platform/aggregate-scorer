@@ -40,7 +40,7 @@ async function handle (message) {
   }
   const timeSince = submissionCreatedDate.getTime() - submissionPhaseStartedDate.getTime()
   // get submission review details
-  const reviewDetails = await helper.getSubmissionReviewDetails(submissionId, token)
+  const reviewDetails = await helper.getSubmissionReviewDetails(message.payload.id, token)
 
   if (!reviewDetails.metadata || !reviewDetails.metadata.tests) {
     throw new Error(`Review for submission with id ${submissionId} does not have metadata. Cannot calculate score without it.`)

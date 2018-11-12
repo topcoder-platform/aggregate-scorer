@@ -42,11 +42,15 @@ async function handle (message) {
   // get submission review details
   const reviewDetails = await helper.getSubmissionReviewDetails(submissionId, token)
 
-  if (!reviewDetails.metadata) {
+  if (!reviewDetails.metadata || !reviewDetails.metadata.tests) {
     throw new Error(`Review for submission with id ${submissionId} does not have metadata. Cannot calculate score without it.`)
   }
+
+  let tests = reviewDetails.metadata.tests
+
+  let testsPassed = tests.total - tests.pending - tests.failed
   // calculate aggregate score
-  const ratio = reviewDetails.metadata.testsPassed / reviewDetails.metadata.totalTests
+  const ratio = testsPassed / tests.total
   let aggregateScore = (ratio * 100) + (timeSince * ratio / 100)
   // aggregateScore won't be negative
   if (aggregateScore > 100) {

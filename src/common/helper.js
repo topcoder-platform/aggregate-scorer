@@ -83,6 +83,11 @@ async function saveSubmissionReviewSummation (submissionId, reviewSummation, m2m
   const client = getTCAPIClient(m2mToken)
   const getUrl = config.GET_REVIEW_SUMMATION_URL.replace('{submissionId}', submissionId)
   const result = await client.get(getUrl)
+
+  console.log('=========');
+  console.log(reviewSummation);
+  console.log('=========');
+
   if (result.data.length === 0) {
     // create review summation
     await client.post(config.CREATE_REVIEW_SUMMATION_URL, reviewSummation)

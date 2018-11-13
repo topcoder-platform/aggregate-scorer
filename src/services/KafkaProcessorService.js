@@ -43,7 +43,22 @@ async function handle (message) {
   const reviewDetails = await helper.getSubmissionReviewDetails(message.payload.id, token)
 
   if (!reviewDetails.metadata || !reviewDetails.metadata.tests) {
-    throw new Error(`Review for submission with id ${submissionId} does not have metadata. Cannot calculate score without it.`)
+    // throw new Error(`Review for submission with id ${submissionId} does not have metadata. Cannot calculate score without it.`)
+    let aggregateScore = 0
+
+    const reviewSummation = {
+      aggregateScore,
+      isPassing: false,
+      scoreCardId: uuid(),
+      submissionId,
+      metadata: {}
+    }
+    
+    logger.info(`Save review summation: ${JSON.stringify(reviewSummation, null, 4)}`)
+    await helper.saveSubmissionReviewSummation(submissionId, reviewSummation, token)
+  
+    logger.info('The Kafka message is successfully processed.')
+    return true
   }
 
   let tests = reviewDetails.metadata.tests

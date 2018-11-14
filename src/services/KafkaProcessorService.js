@@ -53,15 +53,15 @@ async function handle (message) {
       submissionId,
       metadata: {}
     }
-    
+
     logger.info(`Save review summation: ${JSON.stringify(reviewSummation, null, 4)}`)
     await helper.saveSubmissionReviewSummation(submissionId, reviewSummation, token)
-  
+
     logger.info('The Kafka message is successfully processed.')
     return true
   }
 
-  let tests = reviewDetails.metadata.tests
+  let tests = reviewDetails.metadata.assertions
 
   let testsPassed = tests.total - tests.pending - tests.failed
   // calculate aggregate score

@@ -38,7 +38,12 @@ async function handle (message) {
   if (submissionCreatedDate < submissionPhaseStartedDate) {
     throw new Error('Submission created time is earlier than submission phase actual start time.')
   }
+
+  const submissionPhaseEndDate = new Date(_.get(submissionPhase, 'scheduledEndTime'), '')
+
   const timeSince = submissionCreatedDate.getTime() - submissionPhaseStartedDate.getTime()
+  const timeLeft = submissionPhaseEndDate.getTime() - submissionCreatedDate.getTime()
+  const totalTime = submissionPhaseEndDate.getTime() - submissionPhaseStartedDate.getTime()
   // get submission review details
   const reviewDetails = await helper.getSubmissionReviewDetails(message.payload.id, token)
 
@@ -69,11 +74,18 @@ async function handle (message) {
   const ratio = testsPassed / tests.total
   logger.debug(`${submissionId}: ratio = ${ratio}`)
   logger.debug(`${submissionId}: timeSince = ${timeSince}`)
+  logger.debug(`${submissionId}: timeLeft = ${timeLeft}`)
+  logger.debug(`${submissionId}: totalTime = ${totalTime}`)
+
   logger.debug(`${submissionId}: submissionCreatedDate = ${submissionCreatedDate} / ${submissionCreatedDate.getTime()}`)
   logger.debug(
     `${submissionId}: submissionPhaseStartedDate = ${submissionPhaseStartedDate} / ${submissionPhaseStartedDate.getTime()}`
   )
-  let aggregateScore = (ratio * 100) + (timeSince * ratio / submissionPhaseStartedDate.getTime())
+  logger.debug(
+    `${submissionId}: submissionPhaseEndDate = ${submissionPhaseEndDate} / ${submissionPhaseEndDate.getTime()}`
+  )
+
+  let aggregateScore = (ratio * 100) + ((timeLeft / totalTime) * 100)
   logger.debug(`${submissionId}: aggregateScore = ${aggregateScore}`)
   // aggregateScore won't be negative
   if (aggregateScore > 100) {

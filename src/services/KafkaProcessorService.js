@@ -39,7 +39,7 @@ async function handle (message) {
     throw new Error('Submission created time is earlier than submission phase actual start time.')
   }
 
-  const submissionPhaseEndDate = Date.parse(_.get(submissionPhase, 'scheduledEndTime'), '')
+  const submissionPhaseEndDate = new Date(Date.parse(_.get(submissionPhase, 'scheduledEndTime'), ''))
 
   const timeSince = submissionCreatedDate.getTime() - submissionPhaseStartedDate.getTime()
   const timeLeft = submissionPhaseEndDate.getTime() - submissionCreatedDate.getTime()

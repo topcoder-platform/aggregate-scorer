@@ -86,6 +86,7 @@ async function handle (message) {
   )
 
   let aggregateScore = (ratio * 100) + (timeLeft / totalTime)
+  aggregateScore = Math.round(aggregateScore * 100) / 100
   logger.debug(`${submissionId}: timeLeft / totalTime = ${(timeLeft / totalTime)}`)
   logger.debug(`${submissionId}: aggregateScore = ${aggregateScore}`)
   // aggregateScore won't be negative

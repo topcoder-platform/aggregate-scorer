@@ -64,12 +64,17 @@ async function handle (message) {
   let tests = reviewDetails.metadata.assertions
 
   let testsPassed = tests.total - tests.pending - tests.failed
-  logger.info(`${submissionId}: testsPassed = ${testsPassed}`)
+  logger.debug(`${submissionId}: testsPassed = ${testsPassed}`)
   // calculate aggregate score
   const ratio = testsPassed / tests.total
-  logger.info(`${submissionId}: ratio = ${ratio}`)
-  let aggregateScore = (ratio * 100) + (timeSince * ratio / 100)
-  logger.info(`${submissionId}: aggregateScore = ${aggregateScore}`)
+  logger.debug(`${submissionId}: ratio = ${ratio}`)
+  logger.debug(`${submissionId}: timeSince = ${timeSince}`)
+  logger.debug(`${submissionId}: submissionCreatedDate = ${submissionCreatedDate} / ${submissionCreatedDate.getTime()}`)
+  logger.debug(
+    `${submissionId}: submissionPhaseStartedDate = ${submissionPhaseStartedDate} / ${submissionPhaseStartedDate.getTime()}`
+  )
+  let aggregateScore = (ratio * 100) + (timeSince * ratio / submissionPhaseStartedDate.getTime())
+  logger.debug(`${submissionId}: aggregateScore = ${aggregateScore}`)
   // aggregateScore won't be negative
   if (aggregateScore > 100) {
     aggregateScore = 100

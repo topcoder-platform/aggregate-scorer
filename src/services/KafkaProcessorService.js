@@ -85,7 +85,8 @@ async function handle (message) {
     `${submissionId}: submissionPhaseEndDate = ${submissionPhaseEndDate} `
   )
 
-  let aggregateScore = (ratio * 100) + ((timeLeft / totalTime) * 100)
+  let aggregateScore = (ratio * 100) + (timeLeft / totalTime)
+  logger.debug(`${submissionId}: timeLeft / totalTime = ${(timeLeft / totalTime)}`)
   logger.debug(`${submissionId}: aggregateScore = ${aggregateScore}`)
   // aggregateScore won't be negative
   if (aggregateScore > 100) {

@@ -31,7 +31,7 @@ jobs:
       - deploy:
           name: Running MasterScript.
           command: |
-            git clone --branch master https://github.com/topcoder-platform/tc-deploy-scripts ../buildscript
+            git clone --branch v1.1 https://github.com/topcoder-platform/tc-deploy-scripts ../buildscript
             cp ./../buildscript/master_deploy.sh .
             ./master_deploy.sh -d ECS -e DEV -t latest -s aggregate-scorer -i aggregate-scorer
 
@@ -48,7 +48,7 @@ jobs:
       - deploy:
           name: Running MasterScript.
           command: |
-            git clone --branch master https://github.com/topcoder-platform/tc-deploy-scripts ../buildscript
+            git clone --branch v1.1 https://github.com/topcoder-platform/tc-deploy-scripts ../buildscript
             cp ./../buildscript/master_deploy.sh .
             ./master_deploy.sh -d ECS -e PROD  -t latest -s aggregate-scorer -i aggregate-scorer
 

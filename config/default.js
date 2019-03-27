@@ -26,6 +26,7 @@ module.exports = {
   TOKEN_CACHE_TIME: process.env.TOKEN_CACHE_TIME || 86400000,
   AUTH0_CLIENT_ID: process.env.AUTH0_CLIENT_ID,
   AUTH0_CLIENT_SECRET: process.env.AUTH0_CLIENT_SECRET,
+  AUTH0_PROXY_SERVER_URL: process.env.AUTH0_PROXY_SERVER_URL,
 
   PAYLOAD_RESOURCE: process.env.PAYLOAD_RESOURCE || 'review',
   PAYLOAD_TYPE_ID: process.env.PAYLOAD_TYPE_ID || 'e6ca06fe-bec5-41bb-afac-636860fb39a7',

@@ -16,6 +16,8 @@ module.exports = {
   // for the local Kafka, they are not needed
   KAFKA_CLIENT_CERT: process.env.KAFKA_CLIENT_CERT || fileIfExists('./kafkadev.cert'),
   KAFKA_CLIENT_CERT_KEY: process.env.KAFKA_CLIENT_CERT_KEY || fileIfExists('./kafkadev.key'),
+  // Kafka group id
+  KAFKA_GROUP_ID: process.env.KAFKA_GROUP_ID || 'aggregate-scorer-processor',
   // Kafka topics to listen to
   TOPICS: (process.env.TOPICS && process.env.TOPICS.split(',')) || ['submission.notification.create',
     'submission.notification.update'
@@ -29,7 +31,7 @@ module.exports = {
   AUTH0_PROXY_SERVER_URL: process.env.AUTH0_PROXY_SERVER_URL,
 
   PAYLOAD_RESOURCE: process.env.PAYLOAD_RESOURCE || 'review',
-  PAYLOAD_TYPE_ID: process.env.PAYLOAD_TYPE_ID || 'e6ca06fe-bec5-41bb-afac-636860fb39a7',
+  PAYLOAD_TYPE_IDS: (process.env.PAYLOAD_TYPE_IDS && process.env.PAYLOAD_TYPE_IDS.split(',')) || ['e6ca06fe-bec5-41bb-afac-636860fb39a7'],
   SUBMISSION_PHASE_TYPE: process.env.SUBMISSION_PHASE_TYPE || 'Submission',
 
   GET_SUBMISSION_DETAILS_URL: process.env.GET_SUBMISSION_DETAILS_URL ||

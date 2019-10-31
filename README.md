@@ -19,6 +19,7 @@ The following parameters can be set in config file or in env variables:
 - KAFKA_CLIENT_CERT_KEY: Kafka connection private key, optional;
     if not provided, then SSL connection is not used, direct insecure connection is used;
     if provided, it can be either path to private key file or private key content
+- KAFKA_GROUP_ID: the Kafka group id
 - TOPICS: Kafka topics to listen to
 - AUTH0_URL: Auth0 URL, used to get TC M2M token
 - AUTH0_AUDIENCE: Auth0 audience, used to get TC M2M token
@@ -26,7 +27,7 @@ The following parameters can be set in config file or in env variables:
 - AUTH0_CLIENT_ID: Auth0 client id, used to get TC M2M token
 - AUTH0_CLIENT_SECRET: Auth0 client secret, used to get TC M2M token
 - PAYLOAD_RESOURCE: the Kafka message payload resource to match message to process
-- PAYLOAD_TYPE_ID: the Kafka message payload type id to match message to process
+- PAYLOAD_TYPE_IDS: the Kafka message payload type ids to match message to process
 - SUBMISSION_PHASE_TYPE: the challenge submission phase type name
 - GET_SUBMISSION_DETAILS_URL: URL to get submission details
 - GET_CHALLENGE_DETAILS_URL: URL to get challenge details

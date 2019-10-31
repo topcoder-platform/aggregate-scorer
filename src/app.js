@@ -13,7 +13,8 @@ const healthcheck = require('topcoder-healthcheck-dropin')
 logger.info('Start Kafka consumer.')
 // create consumer
 const options = {
-  connectionString: config.KAFKA_URL
+  connectionString: config.KAFKA_URL,
+  groupId: config.KAFKA_GROUP_ID
 }
 if (config.KAFKA_CLIENT_CERT && config.KAFKA_CLIENT_CERT_KEY) {
   options.ssl = {
@@ -21,7 +22,7 @@ if (config.KAFKA_CLIENT_CERT && config.KAFKA_CLIENT_CERT_KEY) {
     key: config.KAFKA_CLIENT_CERT_KEY
   }
 }
-const consumer = new Kafka.SimpleConsumer(options)
+const consumer = new Kafka.GroupConsumer(options)
 
 // data handler
 const dataHandler = (messageSet, topic, partition) => Promise.each(messageSet, (m) => {
@@ -49,7 +50,7 @@ const dataHandler = (messageSet, topic, partition) => Promise.each(messageSet, (
   // the message is not of our interest, the message may be valid for other processors,
   // so it doesn't throw error, but simply returns false to ignore this message
   if (_.get(messageJSON, 'payload.resource', '') !== config.PAYLOAD_RESOURCE ||
-    _.get(messageJSON, 'payload.typeId', '') !== config.PAYLOAD_TYPE_ID) {
+    !_.includes(config.PAYLOAD_TYPE_IDS, _.get(messageJSON, 'payload.typeId', ''))) {
     logger.info(
       `Message payload resource or typeId is not matched, the message is ignored: ${_.get(messageJSON, 'payload.resource', '')} / ${_.get(messageJSON, 'payload.typeId', '')}`
     )
@@ -78,18 +79,19 @@ function check () {
 }
 
 consumer
-  .init()
+  .init([{
+    subscriptions: config.TOPICS,
+    handler: dataHandler
+  }])
   // consume configured topics
   .then(() => {
+    logger.info('Initialized.......')
     healthcheck.init([check])
-
-    _.each(config.TOPICS, (tp) => {
-      consumer.subscribe(tp, {
-        time: Kafka.LATEST_OFFSET
-      }, dataHandler)
-    })
+    logger.info('Adding topics successfully.......')
+    logger.info(config.TOPICS)
+    logger.info('Kick Start.......')
   })
-  .catch((err) => logger.logFullError(err))
+  .catch((err) => logger.error(err))
 
 module.exports = {
   kafkaConsumer: consumer

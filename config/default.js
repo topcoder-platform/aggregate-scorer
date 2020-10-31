@@ -37,7 +37,9 @@ module.exports = {
   GET_SUBMISSION_DETAILS_URL: process.env.GET_SUBMISSION_DETAILS_URL ||
     'https://api.topcoder-dev.com/v5/submissions/{submissionId}',
   GET_CHALLENGE_DETAILS_URL: process.env.GET_CHALLENGE_DETAILS_URL ||
-    'https://api.topcoder-dev.com/v3/challenges/{challengeId}',
+    'https://api.topcoder-dev.com/v5/challenges?legacyId={challengeId}',
+  GET_CHALLENGE_SUBMISSION_URL: process.env.GET_CHALLENGE_SUBMISSION_URL ||
+    'https://api.topcoder-dev.com/v5/submissions?challengeId={challengeId}',
   GET_SUBMISSION_REVIEW_DETAILS_URL: process.env.GET_SUBMISSION_REVIEW_DETAILS_URL ||
     'https://api.topcoder-dev.com/v5/reviews/{reviewId}',
   GET_REVIEW_SUMMATION_URL: process.env.GET_REVIEW_SUMMATION_URL ||
@@ -45,5 +47,28 @@ module.exports = {
   CREATE_REVIEW_SUMMATION_URL: process.env.CREATE_REVIEW_SUMMATION_URL ||
     'https://api.topcoder-dev.com/v5/reviewSummations',
   UPDATE_REVIEW_SUMMATION_URL: process.env.UPDATE_REVIEW_SUMMATION_URL ||
-    'https://api.topcoder-dev.com/v5/reviewSummations/{reviewSummationId}'
+    'https://api.topcoder-dev.com/v5/reviewSummations/{reviewSummationId}',
+  RDM_TAGS: (process.env.RDM_TAGS && process.env.RDM_TAGS.split(',')) || ['Other'],
+  RDM_CHALLENGE_INFO: {
+    EASY: {
+      totalTime: 48, // hours
+      maxPoints: 250,
+      difficulty: 'Easy',
+      challengeId: ['30052924']
+    },
+    MEDIUM: {
+      totalTime: 48, // hours
+      maxPoints: 500,
+      difficulty: 'Medium',
+      challengeId: ['30004319']
+    },
+    HARD: {
+      totalTime: 48, // hours
+      maxPoints: 800,
+      difficulty: 'Hard',
+      challengeId: ['30004317']
+    }
+  },
+  SCORE_CARD_ID: process.env.SCORE_CARD_ID || 30001850,
+  SCORE_DECIMALS: process.env.SCORE_DECIMALS || 2
 }

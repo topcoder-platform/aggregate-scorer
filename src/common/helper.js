@@ -54,8 +54,26 @@ async function getChallengeDetails (challengeId, m2mToken) {
   }
   const url = config.GET_CHALLENGE_DETAILS_URL.replace('{challengeId}', challengeId)
   const result = await getTCAPIClient(m2mToken).get(url)
-  if (result.data.result.status < 200 || result.data.result.status >= 300) {
-    throw new Error(`Failed to get challenge details: ${result.data.result.content}`)
+  if (result.data.length !== 1) {
+    throw new Error(`Failed to get challenge details for challenge id: ${challengeId}. Output is: ${result.data}`)
+  }
+  return result.data[0]
+}
+
+/**
+ * Function to get all challenge submissions
+ * @param {String|Number} challengeId the challenge id
+ * @param {String} m2mToken the m2m token to call TC API
+ * @returns {Object} the challenge submissions
+ */
+async function getChallengeSubmissions (challengeId, m2mToken) {
+  if (!challengeId) {
+    throw new Error('Missing challenge id')
+  }
+  const url = config.GET_CHALLENGE_SUBMISSION_URL.replace('{challengeId}', challengeId)
+  const result = await getTCAPIClient(m2mToken).get(url)
+  if (result.data.length === 0) {
+    throw new Error(`Failed to get submission details for challenge id: ${challengeId}. Output is: ${result.data}`)
   }
   return result.data
 }
@@ -98,6 +116,7 @@ module.exports = {
   getM2Mtoken,
   getSubmissionDetails,
   getChallengeDetails,
+  getChallengeSubmissions,
   getSubmissionReviewDetails,
   saveSubmissionReviewSummation
 }

@@ -32,9 +32,14 @@ The following parameters can be set in config file or in env variables:
 - GET_SUBMISSION_DETAILS_URL: URL to get submission details
 - GET_CHALLENGE_DETAILS_URL: URL to get challenge details
 - GET_SUBMISSION_REVIEW_DETAILS_URL: URL to get submission review details
+- GET_CHALLENGE_SUBMISSION_URL: URL to get all submissions of challenge
 - GET_REVIEW_SUMMATION_URL: URL to get submission review summation
 - CREATE_REVIEW_SUMMATION_URL: URL to create submission review summation
 - UPDATE_REVIEW_SUMMATION_URL: URL to update submission review summation
+- RDM_TAGS: rdm tags
+- RDM_CHALLENGE_INFO: rdm challenge info
+- SCORE_CARD_ID: score card id
+- SCORE_DECIMALS: up to how many decimals the score is set to
 
 
 Test config is at `test/testConfig.js`, you don't need to change it.
@@ -133,4 +138,3 @@ info: Message payload resource or typeId is not matched, the message is ignored.
   `{ "topic": "submission.notification.update", "originator": "test-originator", "timestamp": "abc", "mime-type": "application/json", "payload": { "key1": "value1" } }`
   `{ "topic": "submission.notification.create", "originator": "test-originator", "timestamp": "2018-02-16T00:00:00", "mime-type": "application/json" }`
 - watch the app console output, errors details are shown
-

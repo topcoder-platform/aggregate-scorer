@@ -55,7 +55,7 @@ async function getChallengeDetails (challengeId, m2mToken) {
   const url = config.GET_CHALLENGE_DETAILS_URL.replace('{challengeId}', challengeId)
   const result = await getTCAPIClient(m2mToken).get(url)
   if (result.data.length !== 1) {
-    throw new Error(`Failed to get challenge details: ${result.data.result.content}`)
+    throw new Error(`Failed to get challenge details for challenge id: ${challengeId}. Output is: ${result.data}`)
   }
   return result.data[0]
 }
@@ -73,7 +73,7 @@ async function getChallengeSubmissions (challengeId, m2mToken) {
   const url = config.GET_CHALLENGE_SUBMISSION_URL.replace('{challengeId}', challengeId)
   const result = await getTCAPIClient(m2mToken).get(url)
   if (result.data.length === 0) {
-    throw new Error(`Failed to get challenge details: ${result.data.result.content}`)
+    throw new Error(`Failed to get submission details for challenge id: ${challengeId}. Output is: ${result.data}`)
   }
   return result.data
 }

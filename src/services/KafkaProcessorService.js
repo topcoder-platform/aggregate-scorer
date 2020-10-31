@@ -31,7 +31,7 @@ async function handle (message) {
     throw new Error('Failed to find submission phase from challenge details.')
   }
   if (!submissionPhase.actualStartDate) {
-    throw new Error('Submission phase has no actual start time.')
+    throw new Error('Submission phase has no actual start date')
   }
   const submissionPhaseStartedDate = new Date(submissionPhase.actualStartDate)
   if (submissionCreatedDate < submissionPhaseStartedDate) {
@@ -59,15 +59,13 @@ async function handle (message) {
 
     _.forEach(config.RDM_CHALLENGE_INFO, val => {
       const { totalTime, maxPoints, challengeId: rdmChallengeId } = val
-      if (_.includes(rdmChallengeId, challengeId.toString())) {
-        aggregateScore += maxPoints * (0.3 + (0.7 * totalTime * totalTime) / (10 * (10 * submissionOrder + 1) + (totalTime * totalTime)))
+      if (_.includes(rdmChallengeId.toString(), challengeId.toString())) {
+        aggregateScore = maxPoints * (0.3 + (0.7 * totalTime * totalTime) / (10 * (10 * submissionOrder + 1) + (totalTime * totalTime)))
       }
     })
 
-    aggregateScore = Math.round(aggregateScore * 1000) / 1000
-    if (aggregateScore > 100) {
-      aggregateScore = 100
-    }
+    aggregateScore = Number(aggregateScore.toFixed(config.SCORE_DECIMALS))
+
     const reviewSummation = {
       aggregateScore,
       isPassing: true,

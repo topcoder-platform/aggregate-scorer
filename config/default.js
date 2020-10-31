@@ -69,5 +69,6 @@ module.exports = {
       challengeId: ['30004317']
     }
   },
-  SCORE_CARD_ID: process.env.SCORE_CARD_ID || 30001850
+  SCORE_CARD_ID: process.env.SCORE_CARD_ID || 30001850,
+  SCORE_DECIMALS: process.env.SCORE_DECIMALS || 2
 }

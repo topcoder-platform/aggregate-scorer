@@ -4,7 +4,6 @@
 const Joi = require('joi')
 const _ = require('lodash')
 const config = require('config')
-const uuid = require('uuid/v4')
 const logger = require('../common/logger')
 const helper = require('../common/helper')
 
@@ -26,24 +25,64 @@ async function handle (message) {
   const challengeId = submission.challengeId
   const challenge = await helper.getChallengeDetails(challengeId, token)
   // get submission phase start time
-  const phases = _.get(challenge, 'result.content.phases', [])
-  const submissionPhase = _.find(phases, (phase) => phase.type === config.SUBMISSION_PHASE_TYPE)
+  const phases = _.get(challenge, 'phases', [])
+  const submissionPhase = _.find(phases, (phase) => phase.name === config.SUBMISSION_PHASE_TYPE)
   if (!submissionPhase) {
     throw new Error('Failed to find submission phase from challenge details.')
   }
-  if (!submissionPhase.actualStartTime) {
+  if (!submissionPhase.actualStartDate) {
     throw new Error('Submission phase has no actual start time.')
   }
-  const submissionPhaseStartedDate = new Date(submissionPhase.actualStartTime)
+  const submissionPhaseStartedDate = new Date(submissionPhase.actualStartDate)
   if (submissionCreatedDate < submissionPhaseStartedDate) {
     throw new Error('Submission created time is earlier than submission phase actual start time.')
   }
 
-  const submissionPhaseEndDate = Date.parse(_.get(submissionPhase, 'scheduledEndTime'), '')
+  const submissionPhaseEndDate = Date.parse(_.get(submissionPhase, 'scheduledEndDate'), '')
 
   const timeSince = submissionCreatedDate.getTime() - submissionPhaseStartedDate.getTime()
   const timeLeft = submissionPhaseEndDate - submissionCreatedDate.getTime()
   const totalTime = submissionPhaseEndDate - submissionPhaseStartedDate.getTime()
+
+  const tags = _.get(challenge, 'tags', [])
+  if (_.intersection(tags, config.RDM_TAGS).length > 0) {
+    let aggregateScore = 0
+    // get all submissions of the challenge
+    const challengeSubmissions = await helper.getChallengeSubmissions(challengeId, token)
+
+    const beforeMemberIds = _(challengeSubmissions).filter(cs => cs.memberId !== submission.memberId &&
+      new Date(cs.created) < submissionCreatedDate).map('memberId').uniq().value()
+    const afterMemberIds = _(challengeSubmissions).filter(cs => cs.memberId !== submission.memberId &&
+      new Date(cs.created) > submissionCreatedDate).map('memberId').uniq().value()
+
+    const submissionOrder = _.filter(beforeMemberIds, mid => !_.includes(afterMemberIds, mid)).length
+
+    _.forEach(config.RDM_CHALLENGE_INFO, val => {
+      const { totalTime, maxPoints, challengeId: rdmChallengeId } = val
+      if (_.includes(rdmChallengeId, challengeId.toString())) {
+        aggregateScore += maxPoints * (0.3 + (0.7 * totalTime * totalTime) / (10 * (10 * submissionOrder + 1) + (totalTime * totalTime)))
+      }
+    })
+
+    aggregateScore = Math.round(aggregateScore * 1000) / 1000
+    if (aggregateScore > 100) {
+      aggregateScore = 100
+    }
+    const reviewSummation = {
+      aggregateScore,
+      isPassing: true,
+      scoreCardId: config.SCORE_CARD_ID,
+      submissionId,
+      metadata: {}
+    }
+
+    logger.info(`Save review summation: ${JSON.stringify(reviewSummation, null, 4)}`)
+    await helper.saveSubmissionReviewSummation(submissionId, reviewSummation, token)
+
+    logger.info('The Kafka message is successfully processed.')
+    return true
+  }
+
   // get submission review details
   const reviewDetails = await helper.getSubmissionReviewDetails(message.payload.id, token)
 
@@ -54,7 +93,7 @@ async function handle (message) {
     const reviewSummation = {
       aggregateScore,
       isPassing: false,
-      scoreCardId: uuid(),
+      scoreCardId: config.SCORE_CARD_ID,
       submissionId,
       metadata: {}
     }
@@ -98,7 +137,7 @@ async function handle (message) {
   const reviewSummation = {
     aggregateScore,
     isPassing: true,
-    scoreCardId: uuid(),
+    scoreCardId: config.SCORE_CARD_ID,
     submissionId,
     metadata: reviewDetails.metadata
   }

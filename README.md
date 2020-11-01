@@ -40,6 +40,12 @@ The following parameters can be set in config file or in env variables:
 - RDM_CHALLENGE_INFO: rdm challenge info
 - SCORE_CARD_ID: score card id
 - SCORE_DECIMALS: up to how many decimals the score is set to
+- TAG_EASY: easy f2f challenge tag
+- TAG_MEDIUM: medium f2f challenge tag
+- TAG_HARD: hard f2f challenge tag
+- EASY_SCORE_ARRAY: a score array of easy f2f challenge
+- MEDIUM_SCORE_ARRAY: a score array of medium f2f challenge
+- HARD_SCORE_ARRAY: a score array of hard f2f challenge
 
 
 Test config is at `test/testConfig.js`, you don't need to change it.

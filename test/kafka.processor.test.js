@@ -248,4 +248,22 @@ describe('Kafka Processor Tests', () => {
     const result = await service.handle(message)
     expect(result).to.equal(true)
   })
+
+  it('KafkaProcessorService - handle medium f2f challenge message', async () => {
+    const message = {
+      topic: 'submission.notification.update',
+      originator: 'submission-api',
+      timestamp: '2018-01-02T00:00:00',
+      'mime-type': 'application/json',
+      payload: {
+        resource: 'review',
+        id: '44fea656-a52c-4923-a8a6-bd7ad117db45',
+        typeId: 'e6ca06fe-bec5-41bb-afac-636860fb39a7',
+        submissionId: '53585b51-7ae2-417a-ba84-67309daa8b6a',
+        reviewerId: 'c23a4180-65aa-42ec-a945-5fd21dec0503'
+      }
+    }
+    const result = await service.handle(message)
+    expect(result).to.equal(true)
+  })
 })

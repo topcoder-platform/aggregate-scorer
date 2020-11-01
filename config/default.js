@@ -70,5 +70,11 @@ module.exports = {
     }
   },
   SCORE_CARD_ID: process.env.SCORE_CARD_ID || 30001850,
-  SCORE_DECIMALS: process.env.SCORE_DECIMALS || 2
+  SCORE_DECIMALS: process.env.SCORE_DECIMALS || 2,
+  TAG_EASY: process.env.TAG_EASY || 'EASY',
+  TAG_MEDIUM: process.env.TAG_MEDIUM || 'AWS',
+  TAG_HARD: process.env.TAG_HARD || 'HARD',
+  EASY_SCORE_ARRAY: (process.env.EASY_SCORE_ARRAY && process.env.EASY_SCORE_ARRAY.split(',')) || [10, 5, 2],
+  MEDIUM_SCORE_ARRAY: (process.env.MEDIUM_SCORE_ARRAY && process.env.MEDIUM_SCORE_ARRAY.split(',')) || [20, 10, 5],
+  HARD_SCORE_ARRAY: (process.env.HARD_SCORE_ARRAY && process.env.HARD_SCORE_ARRAY.split(',')) || [30, 15, 10]
 }

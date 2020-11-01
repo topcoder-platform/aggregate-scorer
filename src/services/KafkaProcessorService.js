@@ -9,6 +9,44 @@ const helper = require('../common/helper')
 
 /**
  * Handle Kafka message. Returns whether the message is successfully handled. If message is not handled, then it is ignored.
+ * @param {Object} submission the Submission object
+ * @param {Array} scoreArray the array of score
+ * @param {String} token the m2m token
+ * @returns {Boolean} whether the message is successfully handled
+ */
+async function calcF2FScore (submission, scoreArray, token) {
+  let aggregateScore = 0
+  // get all submissions of the challenge
+  const challengeSubmissions = await helper.getChallengeSubmissions(submission.challengeId, token)
+
+  const beforeMemberIds = _(challengeSubmissions).filter(cs => cs.memberId !== submission.memberId &&
+      new Date(cs.created) < new Date(submission.created)).map('memberId').uniq().value()
+
+  if (beforeMemberIds.length < scoreArray.length) {
+    aggregateScore = scoreArray[beforeMemberIds.length]
+  } else {
+    aggregateScore = _.last(scoreArray)
+  }
+
+  aggregateScore = Number(aggregateScore.toFixed(config.SCORE_DECIMALS))
+
+  const reviewSummation = {
+    aggregateScore,
+    isPassing: true,
+    scoreCardId: config.SCORE_CARD_ID,
+    submissionId: submission.id,
+    metadata: {}
+  }
+
+  logger.info(`Save review summation: ${JSON.stringify(reviewSummation, null, 4)}`)
+  await helper.saveSubmissionReviewSummation(submission.id, reviewSummation, token)
+
+  logger.info('The Kafka message is successfully processed.')
+  return true
+}
+
+/**
+ * Handle Kafka message. Returns whether the message is successfully handled. If message is not handled, then it is ignored.
  * @param {Object} message the Kafka message in JSON format
  * @returns {Boolean} whether the message is successfully handled
  */
@@ -79,6 +117,14 @@ async function handle (message) {
 
     logger.info('The Kafka message is successfully processed.')
     return true
+  }
+
+  if (_.includes(tags, config.TAG_EASY)) {
+    return calcF2FScore(submission, config.EASY_SCORE_ARRAY, token)
+  } else if (_.includes(tags, config.TAG_MEDIUM)) {
+    return calcF2FScore(submission, config.MEDIUM_SCORE_ARRAY, token)
+  } else if (_.includes(tags, config.TAG_HARD)) {
+    return calcF2FScore(submission, config.HARD_SCORE_ARRAY, token)
   }
 
   // get submission review details

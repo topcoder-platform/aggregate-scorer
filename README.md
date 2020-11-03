@@ -19,6 +19,7 @@ The following parameters can be set in config file or in env variables:
 - KAFKA_CLIENT_CERT_KEY: Kafka connection private key, optional;
     if not provided, then SSL connection is not used, direct insecure connection is used;
     if provided, it can be either path to private key file or private key content
+- KAFKA_GROUP_ID: the Kafka group id
 - TOPICS: Kafka topics to listen to
 - AUTH0_URL: Auth0 URL, used to get TC M2M token
 - AUTH0_AUDIENCE: Auth0 audience, used to get TC M2M token
@@ -26,14 +27,25 @@ The following parameters can be set in config file or in env variables:
 - AUTH0_CLIENT_ID: Auth0 client id, used to get TC M2M token
 - AUTH0_CLIENT_SECRET: Auth0 client secret, used to get TC M2M token
 - PAYLOAD_RESOURCE: the Kafka message payload resource to match message to process
-- PAYLOAD_TYPE_ID: the Kafka message payload type id to match message to process
+- PAYLOAD_TYPE_IDS: the Kafka message payload type ids to match message to process
 - SUBMISSION_PHASE_TYPE: the challenge submission phase type name
 - GET_SUBMISSION_DETAILS_URL: URL to get submission details
 - GET_CHALLENGE_DETAILS_URL: URL to get challenge details
 - GET_SUBMISSION_REVIEW_DETAILS_URL: URL to get submission review details
+- GET_CHALLENGE_SUBMISSION_URL: URL to get all submissions of challenge
 - GET_REVIEW_SUMMATION_URL: URL to get submission review summation
 - CREATE_REVIEW_SUMMATION_URL: URL to create submission review summation
 - UPDATE_REVIEW_SUMMATION_URL: URL to update submission review summation
+- RDM_TAGS: rdm tags
+- RDM_CHALLENGE_INFO: rdm challenge info
+- SCORE_CARD_ID: score card id
+- SCORE_DECIMALS: up to how many decimals the score is set to
+- TAG_EASY: easy f2f challenge tag
+- TAG_MEDIUM: medium f2f challenge tag
+- TAG_HARD: hard f2f challenge tag
+- EASY_SCORE_ARRAY: a score array of easy f2f challenge
+- MEDIUM_SCORE_ARRAY: a score array of medium f2f challenge
+- HARD_SCORE_ARRAY: a score array of hard f2f challenge
 
 
 Test config is at `test/testConfig.js`, you don't need to change it.
@@ -132,4 +144,3 @@ info: Message payload resource or typeId is not matched, the message is ignored.
   `{ "topic": "submission.notification.update", "originator": "test-originator", "timestamp": "abc", "mime-type": "application/json", "payload": { "key1": "value1" } }`
   `{ "topic": "submission.notification.create", "originator": "test-originator", "timestamp": "2018-02-16T00:00:00", "mime-type": "application/json" }`
 - watch the app console output, errors details are shown
-

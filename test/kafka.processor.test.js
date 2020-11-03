@@ -36,12 +36,12 @@ describe('Kafka Processor Tests', () => {
       'mime-type': 'application/json',
       payload: {
         resource: 'review',
-        id: 'd34d4180-65aa-42ec-a945-5fd21dec0502',
+        id: '44fea656-a52c-4923-a8a6-bd7ad117db45',
         score: 92,
         typeId: 'c56a4180-65aa-42ec-a945-5fd21dec0501',
         reviewerId: 'c23a4180-65aa-42ec-a945-5fd21dec0503',
         scoreCardId: 'b25a4180-65aa-42ec-a945-5fd21dec0503',
-        submissionId: '8f36dfa2-6ff2-463e-88e3-71e1ce6538e6',
+        submissionId: 'dc14cdd4-f131-4c64-92b2-80b53a550c3f',
         created: '2018-05-20T07:00:30.123Z',
         updated: '2018-06-01T07:36:28.178Z',
         createdBy: 'admin',
@@ -229,5 +229,41 @@ describe('Kafka Processor Tests', () => {
     testMessage.payload.typeId = 'other'
     const result = await service.handle(testMessage)
     expect(result).to.equal(false)
+  })
+
+  it('KafkaProcessorService - handle rdm challenge message', async () => {
+    const message = {
+      topic: 'submission.notification.update',
+      originator: 'submission-api',
+      timestamp: '2018-01-02T00:00:00',
+      'mime-type': 'application/json',
+      payload: {
+        resource: 'review',
+        id: '44fea656-a52c-4923-a8a6-bd7ad117db45',
+        typeId: 'e6ca06fe-bec5-41bb-afac-636860fb39a7',
+        submissionId: 'a7d4d2f4-3dfa-477a-ab1c-c8cfa493e3b8',
+        reviewerId: 'c23a4180-65aa-42ec-a945-5fd21dec0503'
+      }
+    }
+    const result = await service.handle(message)
+    expect(result).to.equal(true)
+  })
+
+  it('KafkaProcessorService - handle medium f2f challenge message', async () => {
+    const message = {
+      topic: 'submission.notification.update',
+      originator: 'submission-api',
+      timestamp: '2018-01-02T00:00:00',
+      'mime-type': 'application/json',
+      payload: {
+        resource: 'review',
+        id: '44fea656-a52c-4923-a8a6-bd7ad117db45',
+        typeId: 'e6ca06fe-bec5-41bb-afac-636860fb39a7',
+        submissionId: '53585b51-7ae2-417a-ba84-67309daa8b6a',
+        reviewerId: 'c23a4180-65aa-42ec-a945-5fd21dec0503'
+      }
+    }
+    const result = await service.handle(message)
+    expect(result).to.equal(true)
   })
 })

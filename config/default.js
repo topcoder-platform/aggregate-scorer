@@ -60,7 +60,7 @@ module.exports = {
       totalTime: 48, // hours
       maxPoints: 500,
       difficulty: 'Medium',
-      challengeId: ['30004319']
+      challengeId: ['30004319', '30057476']
     },
     HARD: {
       totalTime: 48, // hours

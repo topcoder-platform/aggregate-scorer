@@ -15,6 +15,7 @@ const helper = require('../common/helper')
  * @returns {Boolean} whether the message is successfully handled
  */
 async function calcF2FScore (submission, scoreArray, token) {
+  logger.info('F2F Contest detected. Calculating score using F2F specific formula')
   let aggregateScore = 0
   // get all submissions of the challenge
   const challengeSubmissions = await helper.getChallengeSubmissions(submission.challengeId, token)
@@ -38,7 +39,7 @@ async function calcF2FScore (submission, scoreArray, token) {
     metadata: {}
   }
 
-  logger.info(`Save review summation: ${JSON.stringify(reviewSummation, null, 4)}`)
+  logger.info(`Save review summation for F2F: ${JSON.stringify(reviewSummation, null, 4)}`)
   await helper.saveSubmissionReviewSummation(submission.id, reviewSummation, token)
 
   logger.info('The Kafka message is successfully processed.')
@@ -84,6 +85,7 @@ async function handle (message) {
 
   const tags = _.get(challenge, 'tags', [])
   if (_.intersection(tags, config.RDM_TAGS).length > 0) {
+    logger.info('RDM Contest detected. Calculating score using RDM specific formula')
     let aggregateScore = 0
     // get all submissions of the challenge
     const challengeSubmissions = await helper.getChallengeSubmissions(challengeId, token)
@@ -98,6 +100,8 @@ async function handle (message) {
     _.forEach(config.RDM_CHALLENGE_INFO, val => {
       const { totalTime, maxPoints, challengeId: rdmChallengeId } = val
       if (_.includes(rdmChallengeId.toString(), challengeId.toString())) {
+        logger.debug('Configuration used for the RDM calculation:')
+        logger.debug(`totalTime: ${totalTime}, maxPoints: ${maxPoints}, challengeId: ${challengeId}`)
         aggregateScore = maxPoints * (0.3 + (0.7 * totalTime * totalTime) / (10 * (10 * submissionOrder + 1) + (totalTime * totalTime)))
       }
     })
@@ -112,7 +116,7 @@ async function handle (message) {
       metadata: {}
     }
 
-    logger.info(`Save review summation: ${JSON.stringify(reviewSummation, null, 4)}`)
+    logger.info(`Save review summation for RDM: ${JSON.stringify(reviewSummation, null, 4)}`)
     await helper.saveSubmissionReviewSummation(submissionId, reviewSummation, token)
 
     logger.info('The Kafka message is successfully processed.')
@@ -142,7 +146,7 @@ async function handle (message) {
       metadata: {}
     }
 
-    logger.info(`Save review summation: ${JSON.stringify(reviewSummation, null, 4)}`)
+    logger.info(`Save review summation without metadata: ${JSON.stringify(reviewSummation, null, 4)}`)
     await helper.saveSubmissionReviewSummation(submissionId, reviewSummation, token)
 
     logger.info('The Kafka message is successfully processed.')
@@ -185,7 +189,7 @@ async function handle (message) {
     submissionId,
     metadata: reviewDetails.metadata
   }
-  logger.info(`Save review summation: ${JSON.stringify(reviewSummation, null, 4)}`)
+  logger.info(`Save review summation using metadata assertions: ${JSON.stringify(reviewSummation, null, 4)}`)
   await helper.saveSubmissionReviewSummation(submissionId, reviewSummation, token)
 
   logger.info('The Kafka message is successfully processed.')

@@ -48,25 +48,25 @@ module.exports = {
     'https://api.topcoder-dev.com/v5/reviewSummations',
   UPDATE_REVIEW_SUMMATION_URL: process.env.UPDATE_REVIEW_SUMMATION_URL ||
     'https://api.topcoder-dev.com/v5/reviewSummations/{reviewSummationId}',
-  RDM_TAGS: (process.env.RDM_TAGS && process.env.RDM_TAGS.split(',')) || ['Other'],
+  RDM_TAGS: (process.env.RDM_TAGS && process.env.RDM_TAGS.split(',')) || ['Easy', 'Medium', 'Hard'],
   RDM_CHALLENGE_INFO: {
     EASY: {
-      totalTime: 48, // hours
-      maxPoints: 250,
+      totalTime: process.env.RDM_EASY_TIME || 48, // hours
+      maxPoints: process.env.RDM_EASY_MAX_POINTS || 250,
       difficulty: 'Easy',
-      challengeId: ['30052924']
+      challengeId: process.env.RDM_EASY_CHALLENGE_IDS || ['30052924']
     },
     MEDIUM: {
-      totalTime: 48, // hours
-      maxPoints: 500,
+      totalTime: process.env.RDM_MEDIUM_TIME || 48, // hours
+      maxPoints: process.env.RDM_MEDIUM_MAX_POINTS || 500,
       difficulty: 'Medium',
-      challengeId: ['30004319']
+      challengeId: process.env.RDM_MEDIUM_CHALLENGE_IDS || ['30004319', '30057476']
     },
     HARD: {
-      totalTime: 48, // hours
-      maxPoints: 800,
+      totalTime: process.env.RDM_HARD_TIME || 48, // hours
+      maxPoints: process.env.RDM_HARD_MAX_POINTS || 800,
       difficulty: 'Hard',
-      challengeId: ['30004317']
+      challengeId: process.env.RDM_HARD_CHALLENGE_IDS || ['30004317']
     }
   },
   SCORE_CARD_ID: process.env.SCORE_CARD_ID || 30001850,

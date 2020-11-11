@@ -12,9 +12,10 @@ const helper = require('../common/helper')
  * @param {Object} submission the Submission object
  * @param {Array} scoreArray the array of score
  * @param {String} token the m2m token
+ * @param {Object} reviewDetails the review object
  * @returns {Boolean} whether the message is successfully handled
  */
-async function calcF2FScore (submission, scoreArray, token) {
+async function calcF2FScore (submission, scoreArray, token, reviewDetails) {
   logger.info('F2F Contest detected. Calculating score using F2F specific formula')
   let aggregateScore = 0
   // get all submissions of the challenge
@@ -36,7 +37,7 @@ async function calcF2FScore (submission, scoreArray, token) {
     isPassing: true,
     scoreCardId: config.SCORE_CARD_ID,
     submissionId: submission.id,
-    metadata: {}
+    metadata: reviewDetails.metadata || {}
   }
 
   logger.info(`Save review summation for F2F: ${JSON.stringify(reviewSummation, null, 4)}`)
@@ -85,6 +86,11 @@ async function handle (message) {
 
   const tags = _.get(challenge, 'tags', [])
   logger.debug(`Tags on the contest with id ${challengeId} are ${tags}`)
+
+  // get submission review details (unsure why we are doing this since we recieved the review object already.
+  // using it just in case). We read it here to get the metadata info
+  const reviewDetails = await helper.getSubmissionReviewDetails(message.payload.id, token)
+
   if (_.intersection(tags, config.RDM_TAGS).length > 0) {
     logger.info('RDM Contest detected. Calculating score using RDM specific formula')
     let aggregateScore = 0
@@ -114,7 +120,7 @@ async function handle (message) {
       isPassing: true,
       scoreCardId: config.SCORE_CARD_ID,
       submissionId,
-      metadata: {}
+      metadata: reviewDetails.metadata || {}
     }
 
     logger.info(`Save review summation for RDM: ${JSON.stringify(reviewSummation, null, 4)}`)
@@ -125,15 +131,12 @@ async function handle (message) {
   }
 
   if (_.includes(tags, config.TAG_EASY)) {
-    return calcF2FScore(submission, config.EASY_SCORE_ARRAY, token)
+    return calcF2FScore(submission, config.EASY_SCORE_ARRAY, token, reviewDetails)
   } else if (_.includes(tags, config.TAG_MEDIUM)) {
-    return calcF2FScore(submission, config.MEDIUM_SCORE_ARRAY, token)
+    return calcF2FScore(submission, config.MEDIUM_SCORE_ARRAY, token, reviewDetails)
   } else if (_.includes(tags, config.TAG_HARD)) {
-    return calcF2FScore(submission, config.HARD_SCORE_ARRAY, token)
+    return calcF2FScore(submission, config.HARD_SCORE_ARRAY, token, reviewDetails)
   }
-
-  // get submission review details
-  const reviewDetails = await helper.getSubmissionReviewDetails(message.payload.id, token)
 
   if (!reviewDetails.metadata || !reviewDetails.metadata.tests) {
     // throw new Error(`Review for submission with id ${submissionId} does not have metadata. Cannot calculate score without it.`)

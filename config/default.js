@@ -49,20 +49,20 @@ module.exports = {
   RDM_TAGS: process.env.RDM_TAGS ? process.env.RDM_TAGS.split(',') : 'Easy,Medium,Hard'.split(','),
   RDM_CHALLENGE_INFO: {
     EASY: {
-      totalTime: process.env.RDM_EASY_TIME || 48, // hours
-      maxPoints: process.env.RDM_EASY_MAX_POINTS || 250,
+      totalTime: parseInt(process.env.RDM_EASY_TIME, 10) || 48, // hours
+      maxPoints: parseInt(process.env.RDM_EASY_MAX_POINTS, 10) || 250,
       difficulty: 'Easy',
       challengeIds: process.env.RDM_EASY_CHALLENGE_IDS ? process.env.RDM_EASY_CHALLENGE_IDS.split(',') : '30052924'.split(',')
     },
     MEDIUM: {
-      totalTime: process.env.RDM_MEDIUM_TIME || 48, // hours
-      maxPoints: process.env.RDM_MEDIUM_MAX_POINTS || 500,
+      totalTime: parseInt(process.env.RDM_MEDIUM_TIME, 10) || 48, // hours
+      maxPoints: parseInt(process.env.RDM_MEDIUM_MAX_POINTS, 10) || 500,
       difficulty: 'Medium',
       challengeIds: process.env.RDM_MEDIUM_CHALLENGE_IDS ? process.env.RDM_MEDIUM_CHALLENGE_IDS.split(',') : '30004319,30057476'.split(',')
     },
     HARD: {
-      totalTime: process.env.RDM_HARD_TIME || 48, // hours
-      maxPoints: process.env.RDM_HARD_MAX_POINTS || 800,
+      totalTime: parseInt(process.env.RDM_HARD_TIME, 10) || 48, // hours
+      maxPoints: parseInt(process.env.RDM_HARD_MAX_POINTS, 10) || 800,
       difficulty: 'Hard',
       challengeIds: process.env.RDM_HARD_CHALLENGE_IDS ? process.env.RDM_HARD_CHALLENGE_IDS.split(',') : '30004317'.split(',')
     }

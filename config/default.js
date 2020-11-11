@@ -31,7 +31,7 @@ module.exports = {
   AUTH0_PROXY_SERVER_URL: process.env.AUTH0_PROXY_SERVER_URL,
 
   PAYLOAD_RESOURCE: process.env.PAYLOAD_RESOURCE || 'review',
-  PAYLOAD_TYPE_IDS: (process.env.PAYLOAD_TYPE_IDS && process.env.PAYLOAD_TYPE_IDS.split(',')) || ['e6ca06fe-bec5-41bb-afac-636860fb39a7'],
+  PAYLOAD_TYPE_IDS: process.env.PAYLOAD_TYPE_IDS ? process.env.PAYLOAD_TYPE_IDS.replace(/\\"/g, '') : '["e6ca06fe-bec5-41bb-afac-636860fb39a7"]',
   SUBMISSION_PHASE_TYPE: process.env.SUBMISSION_PHASE_TYPE || 'Submission',
 
   GET_SUBMISSION_DETAILS_URL: process.env.GET_SUBMISSION_DETAILS_URL ||

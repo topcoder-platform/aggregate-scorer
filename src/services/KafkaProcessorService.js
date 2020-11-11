@@ -24,9 +24,9 @@ async function calcF2FScore (submission, scoreArray, token) {
       new Date(cs.created) < new Date(submission.created)).map('memberId').uniq().value()
 
   if (beforeMemberIds.length < scoreArray.length) {
-    aggregateScore = scoreArray[beforeMemberIds.length]
+    aggregateScore = parseInt(scoreArray[beforeMemberIds.length], 10)
   } else {
-    aggregateScore = _.last(scoreArray)
+    aggregateScore = parseInt(_.last(scoreArray))
   }
 
   aggregateScore = Number(aggregateScore.toFixed(config.SCORE_DECIMALS))
@@ -84,6 +84,7 @@ async function handle (message) {
   const totalTime = submissionPhaseEndDate - submissionPhaseStartedDate.getTime()
 
   const tags = _.get(challenge, 'tags', [])
+  logger.debug(`Tags on the contest with id ${challengeId} are ${tags}`)
   if (_.intersection(tags, config.RDM_TAGS).length > 0) {
     logger.info('RDM Contest detected. Calculating score using RDM specific formula')
     let aggregateScore = 0
@@ -98,8 +99,8 @@ async function handle (message) {
     const submissionOrder = _.filter(beforeMemberIds, mid => !_.includes(afterMemberIds, mid)).length
 
     _.forEach(config.RDM_CHALLENGE_INFO, val => {
-      const { totalTime, maxPoints, challengeId: rdmChallengeId } = val
-      if (_.includes(rdmChallengeId.toString(), challengeId.toString())) {
+      const { totalTime, maxPoints, challengeIds: rdmChallengeIds } = val
+      if (_.includes(rdmChallengeIds, challengeId.toString())) {
         logger.debug('Configuration used for the RDM calculation:')
         logger.debug(`totalTime: ${totalTime}, maxPoints: ${maxPoints}, challengeId: ${challengeId}`)
         aggregateScore = maxPoints * (0.3 + (0.7 * totalTime * totalTime) / (10 * (10 * submissionOrder + 1) + (totalTime * totalTime)))

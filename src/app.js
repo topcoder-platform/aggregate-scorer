@@ -57,6 +57,12 @@ const dataHandler = (messageSet, topic, partition) => Promise.each(messageSet, (
     return
   }
 
+  // Ignore reviews with queued status
+  if (_.get(messageJSON, 'payload.resource', '') === 'review' && _.get(messageJSON, 'payload.status', '') === 'queued') {
+    logger.info('Ignoring queued review')
+    return
+  }
+
   return KafkaProcessorService.handle(messageJSON)
     // commit offset if the message is successfully handled
     .then((handled) => handled && consumer.commitOffset({

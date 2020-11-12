@@ -91,6 +91,8 @@ async function handle (message) {
   // using it just in case). We read it here to get the metadata info
   const reviewDetails = await helper.getSubmissionReviewDetails(message.payload.id, token)
 
+  logger.info(`Review details as fetched from API: ${JSON.stringify(reviewDetails, null, 4)}`)
+
   if (_.intersection(tags, config.RDM_TAGS).length > 0) {
     logger.info('RDM Contest detected. Calculating score using RDM specific formula')
     let aggregateScore = 0

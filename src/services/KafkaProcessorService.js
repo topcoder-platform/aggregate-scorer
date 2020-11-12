@@ -159,9 +159,9 @@ async function handle (message) {
     return true
   }
 
-  let tests = reviewDetails.metadata.assertions
+  let tests = reviewDetails.metadata.assertions || reviewDetails.metadata.tests
 
-  let testsPassed = tests.total - tests.pending - tests.failed
+  let testsPassed = tests.passed ? tests.passed : (tests.total - tests.pending - tests.failed)
   logger.debug(`${submissionId}: testsPassed = ${testsPassed}`)
   // calculate aggregate score
   const ratio = testsPassed / tests.total

@@ -183,10 +183,6 @@ async function handle (message) {
   aggregateScore = Math.round(aggregateScore * 1000) / 1000
   logger.debug(`${submissionId}: timeLeft / totalTime = ${(timeLeft / totalTime)}`)
   logger.debug(`${submissionId}: aggregateScore = ${aggregateScore}`)
-  // aggregateScore won't be negative
-  if (aggregateScore > 100) {
-    aggregateScore = 100
-  }
   // save review summation
   const reviewSummation = {
     aggregateScore,

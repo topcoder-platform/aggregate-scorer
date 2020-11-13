@@ -74,5 +74,6 @@ module.exports = {
   TAG_HARD: process.env.TAG_HARD || 'Hard',
   EASY_SCORE_ARRAY: process.env.EASY_SCORE_ARRAY ? process.env.EASY_SCORE_ARRAY.split(',') : '10,5,2'.split(','),
   MEDIUM_SCORE_ARRAY: process.env.MEDIUM_SCORE_ARRAY ? process.env.MEDIUM_SCORE_ARRAY.split(',') : '20,10,5'.split(','),
-  HARD_SCORE_ARRAY: process.env.HARD_SCORE_ARRAY ? process.env.HARD_SCORE_ARRAY.split(',') : '30,15,10'.split(',')
+  HARD_SCORE_ARRAY: process.env.HARD_SCORE_ARRAY ? process.env.HARD_SCORE_ARRAY.split(',') : '30,15,10'.split(','),
+  TIME_WEIGHTAGE: process.env.TIME_WEIGHTAGE ? parseInt(process.env.TIME_WEIGHTAGE, 10) : 10
 }

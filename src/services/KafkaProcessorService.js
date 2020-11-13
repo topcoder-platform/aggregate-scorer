@@ -179,14 +179,16 @@ async function handle (message) {
   )
 
   let timeRatio = (timeLeft / totalTime)
-  let aggregateScore = (ratio * 100) + timeRatio
+  let aggregateScore
+
+  if (ratio > 0) {
+    aggregateScore = (ratio * 100) + (timeRatio * config.TIME_WEIGHTAGE)
+  } else {
+    aggregateScore = 0
+  }
   aggregateScore = Math.round(aggregateScore * 1000) / 1000
   logger.debug(`${submissionId}: timeLeft / totalTime = ${(timeLeft / totalTime)}`)
   logger.debug(`${submissionId}: aggregateScore = ${aggregateScore}`)
-  // aggregateScore won't be negative
-  if (aggregateScore > 100) {
-    aggregateScore = 100
-  }
   // save review summation
   const reviewSummation = {
     aggregateScore,

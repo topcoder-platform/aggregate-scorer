@@ -87,11 +87,7 @@ async function handle (message) {
   const tags = _.get(challenge, 'tags', [])
   logger.debug(`Tags on the contest with id ${challengeId} are ${tags}`)
 
-  // get submission review details (unsure why we are doing this since we recieved the review object already.
-  // using it just in case). We read it here to get the metadata info
-  const reviewDetails = await helper.getSubmissionReviewDetails(message.payload.id, token)
-
-  logger.info(`Review details as fetched from API: ${JSON.stringify(reviewDetails, null, 4)}`)
+  const reviewDetails = message.payload
 
   if (_.intersection(tags, config.RDM_TAGS).length > 0) {
     logger.info('RDM Contest detected. Calculating score using RDM specific formula')

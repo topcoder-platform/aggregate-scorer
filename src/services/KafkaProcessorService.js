@@ -102,14 +102,24 @@ async function handle (message) {
 
     const submissionOrder = _.filter(beforeMemberIds, mid => !_.includes(afterMemberIds, mid)).length
 
-    _.forEach(config.RDM_CHALLENGE_INFO, val => {
-      const { totalTime, maxPoints, challengeIds: rdmChallengeIds } = val
-      if (_.includes(rdmChallengeIds, challengeId.toString())) {
+    let foundDifficulty = false
+
+    _.forEach(config.RDM_CHALLENGE_INFO, (val, key) => {
+      const { totalTime, maxPoints, tags: challengeDifficultyTags } = val
+      if (_.intersection(challengeDifficultyTags, tags).length > 0) {
+        foundDifficulty = true
         logger.debug('Configuration used for the RDM calculation:')
         logger.debug(`totalTime: ${totalTime}, maxPoints: ${maxPoints}, challengeId: ${challengeId}`)
         aggregateScore = maxPoints * (0.3 + (0.7 * totalTime * totalTime) / (10 * (10 * submissionOrder + 1) + (totalTime * totalTime)))
       }
     })
+
+    if (!foundDifficulty) {
+      const { totalTime, maxPoints } = config.RDM_CHALLENGE_INFO.EASY
+      logger.debug('No difficulty detected in the challenge tags. Defaulting to using the EASY configuration for the RDM calculation:')
+      logger.debug(`totalTime: ${totalTime}, maxPoints: ${maxPoints}, challengeId: ${challengeId}`)
+      aggregateScore = maxPoints * (0.3 + (0.7 * totalTime * totalTime) / (10 * (10 * submissionOrder + 1) + (totalTime * totalTime)))
+    }
 
     aggregateScore = Number(aggregateScore.toFixed(config.SCORE_DECIMALS))
 

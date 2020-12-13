@@ -48,6 +48,23 @@ async function calcF2FScore (submission, scoreArray, token, reviewDetails) {
 }
 
 /**
+ * Returns the RDM score for the given parameters
+ * @param {Number} passingTests Number of test cases that passed
+ * @param {Number} totalTests Number of test cases in total
+ * @param {Number} maxPoints Maximum points for that contest
+ * @param {Number} passedTime Total phase time in hours
+ * @param {Number} totalTime Total phase time in minutes
+ */
+function getRDMScore (passingTests, totalTests, maxPoints, passedTime, totalTime) {
+  console.log(passingTests, totalTests, maxPoints, passedTime, totalTime)
+  const numerator = 0.7 * totalTime * totalTime
+  const denominator = (10 * passedTime * passedTime) + (totalTime * totalTime)
+  const factor = 0.3 + (numerator / denominator)
+  const testsRatio = passingTests / totalTests
+  return testsRatio * maxPoints * factor
+}
+
+/**
  * Handle Kafka message. Returns whether the message is successfully handled. If message is not handled, then it is ignored.
  * @param {Object} message the Kafka message in JSON format
  * @returns {Boolean} whether the message is successfully handled
@@ -92,33 +109,37 @@ async function handle (message) {
   if (_.intersection(tags, config.RDM_TAGS).length > 0) {
     logger.info('RDM Contest detected. Calculating score using RDM specific formula')
     let aggregateScore = 0
-    // get all submissions of the challenge
-    const challengeSubmissions = await helper.getChallengeSubmissions(challengeId, token)
 
-    const beforeMemberIds = _(challengeSubmissions).filter(cs => cs.memberId !== submission.memberId &&
-      new Date(cs.created) < submissionCreatedDate).map('memberId').uniq().value()
-    const afterMemberIds = _(challengeSubmissions).filter(cs => cs.memberId !== submission.memberId &&
-      new Date(cs.created) > submissionCreatedDate).map('memberId').uniq().value()
+    if (!reviewDetails.metadata) {
+      throw Error('RDM contest review does not have tests metadata')
+    }
 
-    const submissionOrder = _.filter(beforeMemberIds, mid => !_.includes(afterMemberIds, mid)).length
+    const tests = reviewDetails.metadata.assertions || reviewDetails.metadata.tests
+
+    const testsPassed = tests.passed ? tests.passed : (tests.total - tests.pending - tests.failed)
+    const totalTests = tests.total
 
     let foundDifficulty = false
 
     _.forEach(config.RDM_CHALLENGE_INFO, (val, key) => {
-      const { totalTime, maxPoints, tags: challengeDifficultyTags } = val
+      const { totalTime: challengeDifficultyTotalTime, maxPoints, tags: challengeDifficultyTags } = val
       if (_.intersection(challengeDifficultyTags, tags).length > 0) {
         foundDifficulty = true
         logger.debug('Configuration used for the RDM calculation:')
-        logger.debug(`totalTime: ${totalTime}, maxPoints: ${maxPoints}, challengeId: ${challengeId}`)
-        aggregateScore = maxPoints * (0.3 + (0.7 * totalTime * totalTime) / (10 * (10 * submissionOrder + 1) + (totalTime * totalTime)))
+        logger.debug(`totalTime: ${challengeDifficultyTotalTime}, maxPoints: ${maxPoints}, challengeId: ${challengeId}`)
+        // Time since is in milliseconds. But total time is in seconds.
+        // Hence, converting total time to milliseconds too
+        aggregateScore = getRDMScore(testsPassed, totalTests, maxPoints, timeSince, challengeDifficultyTotalTime * 1000)
       }
     })
 
     if (!foundDifficulty) {
-      const { totalTime, maxPoints } = config.RDM_CHALLENGE_INFO.EASY
+      const { totalTime: challengeDifficultyTotalTime, maxPoints } = config.RDM_CHALLENGE_INFO.EASY
       logger.debug('No difficulty detected in the challenge tags. Defaulting to using the EASY configuration for the RDM calculation:')
-      logger.debug(`totalTime: ${totalTime}, maxPoints: ${maxPoints}, challengeId: ${challengeId}`)
-      aggregateScore = maxPoints * (0.3 + (0.7 * totalTime * totalTime) / (10 * (10 * submissionOrder + 1) + (totalTime * totalTime)))
+      logger.debug(`totalTime: ${challengeDifficultyTotalTime}, maxPoints: ${maxPoints}, challengeId: ${challengeId}`)
+      // Time since is in milliseconds. But total time is in seconds.
+      // Hence, converting total time to milliseconds too
+      aggregateScore = getRDMScore(testsPassed, totalTests, maxPoints, timeSince, challengeDifficultyTotalTime * 1000)
     }
 
     aggregateScore = Number(aggregateScore.toFixed(config.SCORE_DECIMALS))

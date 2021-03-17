@@ -144,3 +144,5 @@ info: Message payload resource or typeId is not matched, the message is ignored.
   `{ "topic": "submission.notification.update", "originator": "test-originator", "timestamp": "abc", "mime-type": "application/json", "payload": { "key1": "value1" } }`
   `{ "topic": "submission.notification.create", "originator": "test-originator", "timestamp": "2018-02-16T00:00:00", "mime-type": "application/json" }`
 - watch the app console output, errors details are shown
+
+Forcing Commit.

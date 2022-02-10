@@ -23,7 +23,7 @@
     "supertest": "^3.0.0"
   },
   "dependencies": {
-    "axios": "^0.18.1",
+    "axios": "^0.20.0",
     "bluebird": "^3.5.1",
     "config": "^1.21.0",
     "get-parameter-names": "^0.3.0",

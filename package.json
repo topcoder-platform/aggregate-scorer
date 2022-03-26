@@ -9,7 +9,9 @@
     "lint:fix": "standard --env mocha --fix",
     "test": "mocha test/*.test.js",
     "cov": "nyc mocha test/*.test.js",
-    "mock": "node test/mockAPI.js"
+    "mock": "node test/mockAPI.js",
+    "prepare": "npm run snyk-protect",
+    "snyk-protect": "snyk-protect"
   },
   "author": "TCSCODER",
   "license": "none",
@@ -28,13 +30,15 @@
     "config": "^1.21.0",
     "get-parameter-names": "^0.3.0",
     "joi": "^9.0.4",
-    "lodash": "^4.17.19",
+    "lodash": "^4.17.20",
     "no-kafka": "^3.2.4",
     "tc-core-library-js": "appirio-tech/tc-core-library-js.git#v2.6",
     "topcoder-healthcheck-dropin": "^1.0.3",
-    "winston": "^2.2.0"
+    "winston": "^2.2.0",
+    "@snyk/protect": "latest"
   },
   "engines": {
     "node": "10.x"
-  }
+  },
+  "snyk": true
 }
